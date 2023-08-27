@@ -216,3 +216,11 @@ body {
         transform: scale(1)
     }
 }
+
+.arrow-btn {
+    position: fixed;
+    z-index: 3;
+    top: 90%;
+    left: 50%;
+    transform: translateX(-50%);
+}

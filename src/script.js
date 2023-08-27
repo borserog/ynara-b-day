@@ -7,6 +7,11 @@ import * as dat from "lil-gui";
 
 THREE.ColorManagement.enabled = false;
 const loaderAnim = document.getElementById("js-loader");
+const title = document.getElementById("title");
+
+title.innerHTML = `Aee!! ${
+  new Date().getFullYear() - new Date("1998-08-28").getFullYear()
+} anos!`;
 
 const MODEL_PATH = "models/source/mochi-mochi.glb";
 
@@ -76,8 +81,8 @@ let modelLoader = new GLTFLoader().load(MODEL_PATH, (cat) => {
 
   catModel.position.x = -0.23;
   catModel.position.y = -0.7;
-  catModel.rotateX(-.3);
-  catModel.rotateY(.02);
+  catModel.rotateX(-0.32);
+  catModel.rotateY(0.02);
 
   catModel.scale.set(0.23, 0.23);
 
@@ -86,8 +91,7 @@ let modelLoader = new GLTFLoader().load(MODEL_PATH, (cat) => {
   const animateCatModel = () => {
     const elapsedTime = clock.getElapsedTime();
     catModel.position.y += Math.sin(elapsedTime) * 0.0009;
-  catModel.rotateY(Math.sin(elapsedTime) * .001);
-
+    catModel.rotateY(Math.sin(elapsedTime) * 0.001);
   };
 
   renderer.setAnimationLoop(animateCatModel);
