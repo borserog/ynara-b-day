@@ -40,6 +40,7 @@ body {
     font-family: 'Poppins', sans-serif;
     width: 100%;
     height: 100vh;
+    min-height: 570px;
 }
 
 .wrapper {
@@ -223,4 +224,57 @@ body {
     top: 90%;
     left: 50%;
     transform: translateX(-50%);
+    width: 100px;
+    height: 48px;
+}
+
+.letter {
+    font-family: monospace;
+    font-size: 1.5em;
+    position: relative;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    padding: 2.5em;
+    padding-top: 5em;
+    background-color: rgba(0, 0, 0, 0.754);
+    backdrop-filter: blur(10px);
+    max-height: 90vh;
+    min-width: 400px;
+    max-width: 1140px;
+    border-radius: 8px;
+    display: none;
+    transition: display .2s;
+}
+
+.display {
+    display: grid;
+}
+
+.hide {
+    display: none;
+}
+
+#close {
+    font-size: 2em;
+    cursor: pointer;
+    position: absolute;
+    top: calc(6% - 16px);
+    left: calc(100% - 48px)
+}
+
+
+.message {
+    animation: 1s ease-in fade-in;
+    margin-bottom: 2em;
+}
+
+@keyframes fade-in {
+    0% {
+        opacity: 0;
+    }
+
+    100% {
+        opacity: 1;
+    }
 }

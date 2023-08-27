@@ -9,17 +9,41 @@ THREE.ColorManagement.enabled = false;
 const loaderAnim = document.getElementById("js-loader");
 const title = document.getElementById("title");
 const changeBtn = document.getElementById("arrow-btn");
+const letter = document.querySelector(".letter");
+const letterContent = document.getElementById("letter-content");
+const close = document.getElementById("close");
 
 const age = new Date().getFullYear() - new Date("1998-08-28").getFullYear();
 title.innerHTML = `Aee!! ${age} anos!`;
 
 const MODEL_PATH = "models/source/mochi-mochi.glb";
 
+const msg = [
+  `feliz aniversário, minha linda!${String.fromCodePoint(
+    0x1f389
+  )}${String.fromCodePoint(0x1f382)}`,
+  `parabéns pelos seus ${age} anos!!`,
+  "te desejo um dia abençoado, leve e repleto de bons pensamentos.",
+  "esse ano que está por vir vai ser muito importante; te desejo saúde e sabedoria na sua jornada.",
+  "conte comigo para o que precisar.",
+  `te amo ${String.fromCodePoint(0x2764)},`,
+  "g.",
+];
+msg.forEach((msg, index) => {
+  const el = letter.appendChild(document.createElement("p"));
+  el.setAttribute("class", "message");
+  el.style.animationFillMode = `backwards`;
+  el.style.animationDelay = `${index * 0.5}s`;
+
+  el.innerHTML = msg;
+});
+
 /**
  * Base
  */
 // Debug
 const gui = new dat.GUI();
+gui.destroy();
 
 // Canvas
 const canvas = document.querySelector("canvas.webgl");
@@ -80,8 +104,7 @@ fontLoader.load("/fonts/Inter_Tight_Regular.json", (font) => {
     const animateCatModel = () => {
       const elapsedTime = clock.getElapsedTime();
       catModel.position.y += Math.sin(elapsedTime) * 0.0009;
-      catModel.rotateY(Math.sin(elapsedTime) * 0.001);
-      text.rotateY(Math.sin(elapsedTime) * 0.001);
+      catModel.rotateY(Math.sin(elapsedTime) * 0.0005);
     };
 
     renderer.setAnimationLoop(animateCatModel);
@@ -91,25 +114,16 @@ fontLoader.load("/fonts/Inter_Tight_Regular.json", (font) => {
 /**
  * Background
  */
-// const cylGeo = new THREE.CylinderGeometry(
-//   100,
-//   100,
-//   40,
-//   40,
-//   40,
-//   true,
-//   Math.PI * 2,
-//   Math.PI * 2
-// );
-const cylGeo = new THREE.SphereGeometry(200, 60, 40);
-cylGeo.scale(-1, 1, 1);
+
+const sphereGeo = new THREE.SphereGeometry(200, 60, 40);
+sphereGeo.scale(-1, 1, 1);
 
 const sphereMaterial = new THREE.MeshBasicMaterial({ map: panorama });
 
-const mesh = new THREE.Mesh(cylGeo, sphereMaterial);
+const mesh = new THREE.Mesh(sphereGeo, sphereMaterial);
 scene.add(mesh);
 
-mesh.rotation.set(0, 6, 0);
+mesh.rotation.set(-0.2, 9.72, 0);
 mesh.scale.set(1, 0.3, 0.7);
 mesh.position.set(0, -30, 0);
 
@@ -118,7 +132,7 @@ gui.add(mesh.scale, "z", -1, 10, 0.1);
 gui.add(mesh.scale, "x", -1, 10, 0.1);
 gui.add(mesh.position, "y", -200, 0, 0.1).name("distance");
 gui.add(mesh.rotation, "y", 0, 30, 0.001);
-gui.add(mesh.rotation, "x", 0, 30, 0.001);
+gui.add(mesh.rotation, "x", -30, 30, 0.001);
 gui.add(sphereMaterial, "wireframe");
 
 /**
@@ -158,11 +172,14 @@ const camera = new THREE.PerspectiveCamera(
 camera.position.z = 1.9;
 scene.add(camera);
 
-// Controls
-const controls = new OrbitControls(camera, canvas);
-controls.enableDamping = true;
+camera.rotation.set(0, 0, 0);
 
-gui.add(controls, "enabled");
+// Controls
+// const controls = new OrbitControls(camera, canvas);
+// controls.enableDamping = true;
+// controls.enabled = false;
+
+// gui.add(controls, "enabled");
 
 /**
  * Renderer
@@ -176,6 +193,19 @@ renderer.setSize(sizes.width, sizes.height);
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
 /**
+ * EVENTS
+ */
+changeBtn.addEventListener("click", () => {
+  letter.classList.toggle("display");
+  changeBtn.classList.toggle("hide");
+});
+
+close.addEventListener("click", () => {
+  letter.classList.toggle("display");
+  changeBtn.classList.toggle("hide");
+});
+
+/**
  * Animate
  */
 const clock = new THREE.Clock();
@@ -184,12 +214,21 @@ const tick = () => {
   const elapsedTime = clock.getElapsedTime();
 
   // Update controls
-  controls.update();
+  // controls.update();
 
-  // camera.position.set(
-  //   Math.sin(elapsedTime) * 0.1,
-  //   Math.cos(elapsedTime) * -0.1
-  // );
+  if (window.screen.width < 500) {
+    mesh.rotation.set(
+      Math.sin(elapsedTime) * 0.1,
+      Math.cos(elapsedTime) * 0.6,
+      0
+    );
+  } else {
+    mesh.rotation.set(
+      Math.sin(elapsedTime) * 0.1,
+      Math.cos(elapsedTime) * 0.1,
+      0
+    );
+  }
 
   // Render
   renderer.render(scene, camera);
