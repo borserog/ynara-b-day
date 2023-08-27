@@ -6,6 +6,7 @@ import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import * as dat from "lil-gui";
 
 THREE.ColorManagement.enabled = false;
+const loaderAnim = document.getElementById("js-loader");
 
 const MODEL_PATH = "models/source/mochi-mochi.glb";
 
@@ -30,6 +31,14 @@ const catText1 = textureLoader.load("models/textures/tex1.png");
 const catText2 = textureLoader.load("models/textures/tex2.png");
 
 /**
+ * BOX
+ */
+const boxGeo = new THREE.BoxGeometry(4, 4, 4);
+const matBox = new THREE.MeshNormalMaterial();
+const box = new THREE.Mesh(boxGeo, matBox);
+scene.add(box);
+
+/**
  * Fonts
  */
 const fontLoader = new FontLoader();
@@ -42,7 +51,7 @@ fontLoader.load("/fonts/Inter_Tight_Regular.json", (font) => {
   const textGeometry = new TextGeometry("Feliz\nAniversário,\nYnarinha!\n", {
     font: font,
     size: 0.19,
-    height: .2,
+    height: 0.2,
     curveSegments: 5,
     bevelEnabled: true,
     bevelThickness: 0.03,
@@ -53,7 +62,7 @@ fontLoader.load("/fonts/Inter_Tight_Regular.json", (font) => {
   textGeometry.center();
 
   text = new THREE.Mesh(textGeometry, material);
-  text.position.y = 0.5;
+  text.position.y = 0.6;
   scene.add(text);
 });
 
@@ -66,12 +75,22 @@ let modelLoader = new GLTFLoader().load(MODEL_PATH, (cat) => {
   scene.add(catModel);
 
   catModel.position.x = -0.23;
-  catModel.position.y = -0.6;
-  catModel.rotateX(-0.29);
+  catModel.position.y = -0.7;
+  catModel.rotateX(-.3);
+  catModel.rotateY(.02);
 
-  catModel.scale.set(0.25, 0.25);
+  catModel.scale.set(0.23, 0.23);
 
-  render();
+  loaderAnim.remove();
+
+  const animateCatModel = () => {
+    const elapsedTime = clock.getElapsedTime();
+    catModel.position.y += Math.sin(elapsedTime) * 0.0009;
+  catModel.rotateY(Math.sin(elapsedTime) * .001);
+
+  };
+
+  renderer.setAnimationLoop(animateCatModel);
 });
 
 /**
@@ -138,7 +157,10 @@ const tick = () => {
   // Update controls
   controls.update();
 
-  camera.position.set(Math.sin(elapsedTime) * 0.1, Math.cos(elapsedTime) * -0.1);
+  // camera.position.set(
+  //   Math.sin(elapsedTime) * 0.1,
+  //   Math.cos(elapsedTime) * -0.1
+  // );
 
   // Render
   renderer.render(scene, camera);
