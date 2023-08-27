@@ -19,7 +19,7 @@ const MODEL_PATH = "models/source/mochi-mochi.glb";
  * Base
  */
 // Debug
-// const gui = new dat.GUI();
+const gui = new dat.GUI();
 
 // Canvas
 const canvas = document.querySelector("canvas.webgl");
@@ -32,19 +32,12 @@ const scene = new THREE.Scene();
  */
 const textureLoader = new THREE.TextureLoader();
 const matcapTexture = textureLoader.load("textures/matcaps/4.png");
-const catText1 = textureLoader.load("models/textures/tex1.png");
-const catText2 = textureLoader.load("models/textures/tex2.png");
+const panorama = textureLoader.load("images/panorama.jpg");
+panorama.wrapS = THREE.RepeatWrapping;
+panorama.repeat.x = -2;
 
 /**
- * BOX
- */
-const boxGeo = new THREE.BoxGeometry(4, 4, 4);
-const matBox = new THREE.MeshNormalMaterial();
-const box = new THREE.Mesh(boxGeo, matBox);
-scene.add(box);
-
-/**
- * Fonts
+ * Fonts & Model
  */
 const fontLoader = new FontLoader();
 let text;
@@ -55,7 +48,7 @@ fontLoader.load("/fonts/Inter_Tight_Regular.json", (font) => {
   // Text
   const textGeometry = new TextGeometry(`Feliz\nAniversário,\nYnarinha!\n`, {
     font: font,
-    size: 0.19,
+    size: 0.17,
     height: 0.2,
     curveSegments: 5,
     bevelEnabled: true,
@@ -96,8 +89,37 @@ fontLoader.load("/fonts/Inter_Tight_Regular.json", (font) => {
 });
 
 /**
- * Model
+ * Background
  */
+// const cylGeo = new THREE.CylinderGeometry(
+//   100,
+//   100,
+//   40,
+//   40,
+//   40,
+//   true,
+//   Math.PI * 2,
+//   Math.PI * 2
+// );
+const cylGeo = new THREE.SphereGeometry(200, 60, 40);
+cylGeo.scale(-1, 1, 1);
+
+const sphereMaterial = new THREE.MeshBasicMaterial({ map: panorama });
+
+const mesh = new THREE.Mesh(cylGeo, sphereMaterial);
+scene.add(mesh);
+
+mesh.rotation.set(0, 6, 0);
+mesh.scale.set(1, 0.3, 0.7);
+mesh.position.set(0, -30, 0);
+
+gui.add(mesh.scale, "y", -1, 10, 0.1);
+gui.add(mesh.scale, "z", -1, 10, 0.1);
+gui.add(mesh.scale, "x", -1, 10, 0.1);
+gui.add(mesh.position, "y", -200, 0, 0.1).name("distance");
+gui.add(mesh.rotation, "y", 0, 30, 0.001);
+gui.add(mesh.rotation, "x", 0, 30, 0.001);
+gui.add(sphereMaterial, "wireframe");
 
 /**
  * Sizes
@@ -128,8 +150,8 @@ window.addEventListener("resize", () => {
 const camera = new THREE.PerspectiveCamera(
   75,
   sizes.width / sizes.height,
-  0.1,
-  100
+  1,
+  1000
 );
 // camera.position.x = -2;
 // camera.position.y = -1;
@@ -139,7 +161,8 @@ scene.add(camera);
 // Controls
 const controls = new OrbitControls(camera, canvas);
 controls.enableDamping = true;
-controls.enabled = false;
+
+gui.add(controls, "enabled");
 
 /**
  * Renderer
