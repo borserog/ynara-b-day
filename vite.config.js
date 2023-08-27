@@ -1,4 +1,3 @@
-import basicSsl from "@vitejs/plugin-basic-ssl";
 
 const isCodeSandbox =
   "SANDBOX_URL" in process.env || "CODESANDBOX_HOST" in process.env;
@@ -16,5 +15,4 @@ export default {
     emptyOutDir: true,
     sourcemap: true,
   },
-  plugins: [basicSsl()],
 };

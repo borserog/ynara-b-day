@@ -2,10 +2,12 @@ import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import { FontLoader } from "three/examples/jsm/loaders/FontLoader.js";
 import { TextGeometry } from "three/examples/jsm/geometries/TextGeometry.js";
-import { VRButton } from "three/addons/webxr/VRButton.js";
+import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import * as dat from "lil-gui";
 
 THREE.ColorManagement.enabled = false;
+
+const MODEL_PATH = "models/source/mochi-mochi.glb";
 
 /**
  * Base
@@ -23,27 +25,25 @@ const scene = new THREE.Scene();
  * Textures
  */
 const textureLoader = new THREE.TextureLoader();
-const matcapTexture = textureLoader.load("textures/matcaps/4.png");
-const matcapTextureDonut = textureLoader.load("textures/matcaps/7.png");
+const matcapTexture = textureLoader.load("textures/matcaps/2.png");
+const catText1 = textureLoader.load("models/textures/tex1.png");
+const catText2 = textureLoader.load("models/textures/tex2.png");
 
 /**
  * Fonts
  */
 const fontLoader = new FontLoader();
-
 let text;
-const donuts = [];
-
-fontLoader.load("/fonts/helvetiker_regular.typeface.json", (font) => {
+fontLoader.load("/fonts/Inter_Tight_Regular.json", (font) => {
   // Material
   const material = new THREE.MeshMatcapMaterial({ matcap: matcapTexture });
 
   // Text
-  const textGeometry = new TextGeometry("boa noite,\n ynarinha\n\n   <3", {
+  const textGeometry = new TextGeometry("Feliz\nAniversário,\nYnarinha!\n", {
     font: font,
-    size: 0.2,
-    height: 0.2,
-    curveSegments: 8,
+    size: 0.19,
+    height: .2,
+    curveSegments: 5,
     bevelEnabled: true,
     bevelThickness: 0.03,
     bevelSize: 0.02,
@@ -53,28 +53,25 @@ fontLoader.load("/fonts/helvetiker_regular.typeface.json", (font) => {
   textGeometry.center();
 
   text = new THREE.Mesh(textGeometry, material);
+  text.position.y = 0.5;
   scene.add(text);
+});
 
-  // Donuts
-  const donutGeometry = new THREE.TorusGeometry(0.3, 0.2, 32, 64);
-  const textMaterial = new THREE.MeshMatcapMaterial({
-    matcap: matcapTextureDonut,
-  });
+/**
+ * Model
+ */
+let catModel;
+let modelLoader = new GLTFLoader().load(MODEL_PATH, (cat) => {
+  catModel = cat.scene;
+  scene.add(catModel);
 
-  for (let i = 0; i < 300; i++) {
-    const donut = new THREE.Mesh(donutGeometry, textMaterial);
-    donut.position.x = (Math.random() - 0.5) * 25;
-    donut.position.y = (Math.random() - 0.5) * 25;
-    donut.position.z = (Math.random() - 0.5) * 25;
-    donut.rotation.x = Math.random() * Math.PI;
-    donut.rotation.y = Math.random() * Math.PI;
-    const scale = Math.random();
-    donut.scale.set(scale, scale, scale);
+  catModel.position.x = -0.23;
+  catModel.position.y = -0.6;
+  catModel.rotateX(-0.29);
 
-    donuts.push(donut);
+  catModel.scale.set(0.25, 0.25);
 
-    scene.add(donut);
-  }
+  render();
 });
 
 /**
@@ -109,8 +106,8 @@ const camera = new THREE.PerspectiveCamera(
   0.1,
   100
 );
-camera.position.x = -2;
-camera.position.y = -1;
+// camera.position.x = -2;
+// camera.position.y = -1;
 camera.position.z = 1.9;
 scene.add(camera);
 
@@ -123,14 +120,12 @@ controls.enabled = false;
  * Renderer
  */
 const renderer = new THREE.WebGLRenderer({
-  canvas: canvas,
+  canvas,
+  antialias: true,
 });
 renderer.outputColorSpace = THREE.LinearSRGBColorSpace;
 renderer.setSize(sizes.width, sizes.height);
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-renderer.xr.enabled = true;
-
-document.body.appendChild(VRButton.createButton(renderer));
 
 /**
  * Animate
@@ -143,13 +138,7 @@ const tick = () => {
   // Update controls
   controls.update();
 
-  camera.position.set(Math.sin(elapsedTime) * 0.25, -0.5);
-
-  donuts.forEach((donut, index) => {
-    const turn = index % 2 === 0 ? elapsedTime : -elapsedTime;
-
-    donut.rotation.set(turn, turn, turn);
-  });
+  camera.position.set(Math.sin(elapsedTime) * 0.1, Math.cos(elapsedTime) * -0.1);
 
   // Render
   renderer.render(scene, camera);
@@ -157,17 +146,5 @@ const tick = () => {
   // Call tick again on the next frame
   window.requestAnimationFrame(tick);
 };
-
-renderer.xr.addEventListener(`sessionstart`, () => {
-  renderer.xr.getCamera().position.x = 0
-  renderer.xr.getCamera().position.y = 0
-
-
-  //camera.position.copy(renderer.xr.getCamera().position);
-});
-
-renderer.setAnimationLoop(function () {
-  renderer.render(scene, camera);
-});
 
 tick();
