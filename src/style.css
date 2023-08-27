@@ -218,23 +218,25 @@ body {
     }
 }
 
-#arrow-btn {
+#mail-btn {
     position: fixed;
     z-index: 3;
     top: 90%;
     left: 50%;
-    transform: translateX(-50%);
-    width: 100px;
-    height: 48px;
+    transform: translate(-50%, -50%);
+    font-size: 6em;
+    cursor: pointer;
+    color: rgb(250, 250, 114);
 }
 
 .letter {
+    animation: 1s ease-in-out slip;
+    animation-fill-mode: forwards;
     font-family: monospace;
     font-size: 1.5em;
     position: relative;
     top: 50%;
     left: 50%;
-    transform: translate(-50%, -50%);
     padding: 2.5em;
     padding-top: 5em;
     background-color: rgba(0, 0, 0, 0.754);
@@ -245,6 +247,7 @@ body {
     border-radius: 8px;
     display: none;
     transition: display .2s;
+    z-index: 999;
 }
 
 .display {
@@ -263,7 +266,6 @@ body {
     left: calc(100% - 48px)
 }
 
-
 .message {
     animation: 1s ease-in fade-in;
     margin-bottom: 2em;
@@ -276,5 +278,34 @@ body {
 
     100% {
         opacity: 1;
+    }
+}
+
+#emoji-row {
+    position: fixed;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1;
+    font-size: 7em;
+    padding: .25em;
+    display: flex;
+}
+
+#emoji-row p:not(:last-child) {
+    margin-right: .25em;
+}
+
+@keyframes slip {
+    0% {
+        transform: translate(-50%, 50%);
+    }
+
+    75% {
+        transform: translate(-50%, -60%);
+    }
+
+    100% {
+        transform: translate(-50%, -50%);
     }
 }

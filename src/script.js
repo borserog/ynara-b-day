@@ -8,7 +8,7 @@ import * as dat from "lil-gui";
 THREE.ColorManagement.enabled = false;
 const loaderAnim = document.getElementById("js-loader");
 const title = document.getElementById("title");
-const changeBtn = document.getElementById("arrow-btn");
+const changeBtn = document.getElementById("mail-btn");
 const letter = document.querySelector(".letter");
 const letterContent = document.getElementById("letter-content");
 const close = document.getElementById("close");
@@ -19,10 +19,8 @@ title.innerHTML = `Aee!! ${age} anos!`;
 const MODEL_PATH = "models/source/mochi-mochi.glb";
 
 const msg = [
-  `feliz aniversário, minha linda!${String.fromCodePoint(
-    0x1f389
-  )}${String.fromCodePoint(0x1f382)}`,
-  `parabéns pelos seus ${age} anos!!`,
+  `feliz aniversário, minha linda!`,
+  `parabéns pelos seus ${age} anos!`,
   "te desejo um dia abençoado, leve e repleto de bons pensamentos.",
   "esse ano que está por vir vai ser muito importante; te desejo saúde e sabedoria na sua jornada.",
   "conte comigo para o que precisar.",
@@ -30,7 +28,14 @@ const msg = [
   "g.",
 ];
 msg.forEach((msg, index) => {
-  const el = letter.appendChild(document.createElement("p"));
+  let el;
+
+  if (index === 0) {
+    el = letter.appendChild(document.createElement("h3"));
+  } else {
+    el = letter.appendChild(document.createElement("p"));
+  }
+
   el.setAttribute("class", "message");
   el.style.animationFillMode = `backwards`;
   el.style.animationDelay = `${index * 0.5}s`;
@@ -92,7 +97,7 @@ fontLoader.load("/fonts/Inter_Tight_Regular.json", (font) => {
     catModel = cat.scene;
     scene.add(catModel);
 
-    catModel.position.x = -0.23;
+    catModel.position.x = -0.2;
     catModel.position.y = -0.7;
     catModel.rotateX(-0.32);
     catModel.rotateY(0.02);
@@ -104,7 +109,7 @@ fontLoader.load("/fonts/Inter_Tight_Regular.json", (font) => {
     const animateCatModel = () => {
       const elapsedTime = clock.getElapsedTime();
       catModel.position.y += Math.sin(elapsedTime) * 0.0009;
-      catModel.rotateY(Math.sin(elapsedTime) * 0.0005);
+      catModel.rotateY(Math.sin(elapsedTime) * 0.0004);
     };
 
     renderer.setAnimationLoop(animateCatModel);
