@@ -217,7 +217,7 @@ body {
     }
 }
 
-.arrow-btn {
+#arrow-btn {
     position: fixed;
     z-index: 3;
     top: 90%;

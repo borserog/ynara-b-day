@@ -8,10 +8,10 @@ import * as dat from "lil-gui";
 THREE.ColorManagement.enabled = false;
 const loaderAnim = document.getElementById("js-loader");
 const title = document.getElementById("title");
+const changeBtn = document.getElementById("arrow-btn");
 
-title.innerHTML = `Aee!! ${
-  new Date().getFullYear() - new Date("1998-08-28").getFullYear()
-} anos!`;
+const age = new Date().getFullYear() - new Date("1998-08-28").getFullYear();
+title.innerHTML = `Aee!! ${age} anos!`;
 
 const MODEL_PATH = "models/source/mochi-mochi.glb";
 
@@ -31,7 +31,7 @@ const scene = new THREE.Scene();
  * Textures
  */
 const textureLoader = new THREE.TextureLoader();
-const matcapTexture = textureLoader.load("textures/matcaps/2.png");
+const matcapTexture = textureLoader.load("textures/matcaps/4.png");
 const catText1 = textureLoader.load("models/textures/tex1.png");
 const catText2 = textureLoader.load("models/textures/tex2.png");
 
@@ -53,7 +53,7 @@ fontLoader.load("/fonts/Inter_Tight_Regular.json", (font) => {
   const material = new THREE.MeshMatcapMaterial({ matcap: matcapTexture });
 
   // Text
-  const textGeometry = new TextGeometry("Feliz\nAniversário,\nYnarinha!\n", {
+  const textGeometry = new TextGeometry(`Feliz\nAniversário,\nYnarinha!\n`, {
     font: font,
     size: 0.19,
     height: 0.2,
@@ -67,35 +67,37 @@ fontLoader.load("/fonts/Inter_Tight_Regular.json", (font) => {
   textGeometry.center();
 
   text = new THREE.Mesh(textGeometry, material);
-  text.position.y = 0.6;
+  text.position.y = 0.4;
   scene.add(text);
+
+  let catModel;
+  let modelLoader = new GLTFLoader().load(MODEL_PATH, (cat) => {
+    catModel = cat.scene;
+    scene.add(catModel);
+
+    catModel.position.x = -0.23;
+    catModel.position.y = -0.7;
+    catModel.rotateX(-0.32);
+    catModel.rotateY(0.02);
+
+    catModel.scale.set(0.23, 0.23);
+
+    loaderAnim.remove();
+
+    const animateCatModel = () => {
+      const elapsedTime = clock.getElapsedTime();
+      catModel.position.y += Math.sin(elapsedTime) * 0.0009;
+      catModel.rotateY(Math.sin(elapsedTime) * 0.001);
+      text.rotateY(Math.sin(elapsedTime) * 0.001);
+    };
+
+    renderer.setAnimationLoop(animateCatModel);
+  });
 });
 
 /**
  * Model
  */
-let catModel;
-let modelLoader = new GLTFLoader().load(MODEL_PATH, (cat) => {
-  catModel = cat.scene;
-  scene.add(catModel);
-
-  catModel.position.x = -0.23;
-  catModel.position.y = -0.7;
-  catModel.rotateX(-0.32);
-  catModel.rotateY(0.02);
-
-  catModel.scale.set(0.23, 0.23);
-
-  loaderAnim.remove();
-
-  const animateCatModel = () => {
-    const elapsedTime = clock.getElapsedTime();
-    catModel.position.y += Math.sin(elapsedTime) * 0.0009;
-    catModel.rotateY(Math.sin(elapsedTime) * 0.001);
-  };
-
-  renderer.setAnimationLoop(animateCatModel);
-});
 
 /**
  * Sizes
