@@ -1,8 +1,4 @@
-# Three.js Journey
-
-## Setup
-Download [Node.js](https://nodejs.org/en/download/).
-Run this followed commands:
+# Ynarinha B-day
 
 ``` bash
 # Install dependencies (only the first time)
